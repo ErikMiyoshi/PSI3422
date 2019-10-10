@@ -19,9 +19,13 @@ SERVER::SERVER(/* args */) {}
 
 SERVER::~SERVER() {}
 
-void SERVER::sendBytes(int nBytesToSend, BYTE *buf) {}
+void SERVER::sendBytes(int nBytesToSend, BYTE *buf) {
+    // if (send(new_fd, buf, strlen(buf)+1, 0) == -1) perror("send");
+}
 
-void SERVER::receiveBytes(int nBytesToReceive, BYTE *buf) {}
+void SERVER::receiveBytes(int nBytesToReceive, BYTE *buf) {
+    // if (recv(new_fd, buf, MAXDATASIZE, 0) == -1) perror("recv");
+}
 
 class CLIENT {
    private:
@@ -36,7 +40,7 @@ class CLIENT {
     void receiveBytes(int nBytesToReceive, BYTE *buf);
 };
 
-CLIENT::CLIENT(string endereco) {}
+CLIENT::CLIENT(string endereco) { this->endereco = endereco; }
 
 CLIENT::~CLIENT() {}
 

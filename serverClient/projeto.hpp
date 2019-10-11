@@ -2,13 +2,14 @@
 #include <string>
 
 #include <arpa/inet.h>
+#include <cstring>
 #include <errno.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+//#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -38,7 +39,6 @@ public:
   char buf[MAXDATASIZE];
   struct addrinfo hints, *servinfo, *p;
   struct sockaddr_storage their_addr; // connector's address information
-  socklen_t sin_size;
   struct sigaction sa;
   int yes = 1;
   char s[INET6_ADDRSTRLEN];
@@ -86,6 +86,7 @@ SERVER::SERVER() {
 SERVER::~SERVER() {}
 
 void SERVER::waitConnection() {
+  cout << "entrei conexao" << endl;
   while (1) {
     sin_size = sizeof their_addr;
     new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
@@ -182,6 +183,13 @@ void CLIENT::sendBytes(int nBytesToSend, BYTE *buf) {
 void CLIENT::receiveBytes(int nBytesToReceive, BYTE *buf) {
   if (recv(sockfd, buf, MAXDATASIZE, 0) == -1)
     perror("recv");
+}
+
+void *CLIENT::get_in_addr(struct sockaddr *sa) {
+  if (sa->sa_family == AF_INET) {
+    return &(((struct sockaddr_in *)sa)->sin_addr);
+  }
+  return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
 bool testaBytes(BYTE *buf, BYTE b, int n) {

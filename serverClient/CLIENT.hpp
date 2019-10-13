@@ -34,6 +34,9 @@ public:
   void *get_in_addr(struct sockaddr *sa);
   void sendUint(uint32_t m);
   void receiveUint(uint32_t &m);
+  void sendString(const string &st);
+  void receiveString(string &st);
+
   void encerra();
 
   int sockfd, numbytes;
@@ -120,4 +123,28 @@ void CLIENT::receiveUint(uint32_t &m) {
   m = ntohl(n);
 }
 
+void CLIENT::sendString(const string &st) {
+  int tamanho = st.length();
+  sendUint(tamanho);
+  sendBytes(tamanho, (BYTE *)st.data());
+}
+
+void CLIENT::receiveString(string &st) {
+  uint tamanho;
+  receiveUint(tamanho);
+  st.resize(tamanho);
+  receiveBytes(tamanho, (BYTE *)st.data());
+}
+
 void CLIENT::encerra() { close(sockfd); }
+
+bool testaBytes(BYTE *buf, BYTE b, int n) {
+  // Testa se n bytes da memoria buf possuem valor b
+  bool igual = true;
+  for (unsigned i = 0; i < n; i++)
+    if (buf[i] != b) {
+      igual = false;
+      break;
+    }
+  return igual;
+}

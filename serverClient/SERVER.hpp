@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <arpa/inet.h>
 #include <cstring>
@@ -36,6 +37,8 @@ public:
   void receiveUint(uint32_t &m);
   void sendString(const string &st);
   void receiveString(string &st);
+  void sendVb(const vector<BYTE> &vb);
+  void receiveVb(vector<BYTE> &st);
 
   void encerra();
 
@@ -158,6 +161,19 @@ void SERVER::receiveString(string &st) {
   receiveBytes(tamanho, (BYTE *)st.data());
 }
 
+void SERVER::sendVb(const vector<BYTE> &vb) {
+  int tamanho = vb.size();
+  sendUint(tamanho);
+  sendBytes(tamanho, (BYTE *)vb.data());
+}
+
+void SERVER::receiveVb(vector<BYTE> &vb) {
+  uint tamanho;
+  receiveUint(tamanho);
+  vb.resize(tamanho);
+  receiveBytes(tamanho, (BYTE *)vb.data());
+}
+
 void SERVER::encerra() { close(new_fd); }
 
 bool testaBytes(BYTE *buf, BYTE b, int n) {
@@ -165,6 +181,17 @@ bool testaBytes(BYTE *buf, BYTE b, int n) {
   bool igual = true;
   for (unsigned i = 0; i < n; i++)
     if (buf[i] != b) {
+      igual = false;
+      break;
+    }
+  return igual;
+}
+
+bool testaVb(const vector<BYTE> vb, BYTE b) {
+  // Testa se todos os bytes de vb possuem valor b
+  bool igual = true;
+  for (unsigned i = 0; i < vb.size(); i++)
+    if (vb[i] != b) {
       igual = false;
       break;
     }

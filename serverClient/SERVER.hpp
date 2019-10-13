@@ -32,6 +32,7 @@ public:
   void sendBytes(int nBytesToSend, BYTE *buf);
   void receiveBytes(int nBytesToReceive, BYTE *buf);
   void *get_in_addr(struct sockaddr *sa);
+  void encerra();
 
   socklen_t sin_size;
   struct their_addr;
@@ -46,12 +47,10 @@ public:
 };
 
 SERVER::SERVER() {
-  std::cout << "t1" << std::endl;
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE; // use my IP
-  std::cout << "t2" << std::endl;
   if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
     fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
     // return 1;
@@ -87,9 +86,8 @@ SERVER::SERVER() {
 SERVER::~SERVER() {}
 
 void SERVER::waitConnection() {
-  cout << "WaitConnection" << endl;
+  cout << "EsperandoConexão" << endl;
   while (1) {
-    cout << "esperando" << endl;
     sin_size = sizeof their_addr;
     new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
     if (new_fd == -1) {
@@ -129,6 +127,8 @@ void *SERVER::get_in_addr(struct sockaddr *sa) {
   }
   return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
+
+void SERVER::encerra() { close(new_fd); }
 
 bool testaBytes(BYTE *buf, BYTE b, int n) {
   // Testa se n bytes da memoria buf possuem valor b

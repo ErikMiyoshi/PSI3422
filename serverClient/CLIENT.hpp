@@ -32,6 +32,7 @@ public:
   void sendBytes(int nBytesToSend, BYTE *buf);
   void receiveBytes(int nBytesToReceive, BYTE *buf);
   void *get_in_addr(struct sockaddr *sa);
+  void encerra();
 
   int sockfd, numbytes;
   char buf[MAXDATASIZE];
@@ -91,7 +92,6 @@ void CLIENT::sendBytes(int nBytesToSend, BYTE *buf) {
 
 void CLIENT::receiveBytes(int nBytesToReceive, BYTE *buf) {
   for (int i = 0; i < nBytesToReceive; i++) {
-    cout << i << endl;
     if (recv(sockfd, &buf[i], 1, 0) == -1)
       perror("recv");
   }
@@ -105,3 +105,5 @@ void *CLIENT::get_in_addr(struct sockaddr *sa) {
   }
   return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
+
+void CLIENT::encerra() { close(sockfd); }

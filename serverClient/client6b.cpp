@@ -1,7 +1,7 @@
 // client6b.cpp
 // testa sendBytes e receiveBytes
 #include "CLIENT.hpp"
-#include "projeto.hpp"
+#include "SERVER.hpp"
 
 string convertToString(char *a, int size) {
   int i;
@@ -13,20 +13,14 @@ string convertToString(char *a, int size) {
 }
 
 int main(int argc, char *argv[]) {
-  cout << "testestest" << endl;
-  cout << argv[1] << endl;
   if (argc != 2) {
     perror("client6 servidorIpAddr\n");
   }
-  CLIENT cliente("10.42.0.26");
-  // CLIENTE *cliente =
-  //     new CLIENTE(convertToString(argv[1], sizeof(argv[1]) / sizeof(char)));
-  cout << "client criado" << endl;
+  CLIENT cliente(argv[1]);
   const int n = 100000;
   BYTE buf[n];
 
   cliente.receiveBytes(n, buf);
-  cout << "Recebi buff" << endl;
   if (testaBytes(buf, 111, n))
     printf("Recebeu corretamente %d bytes %d\n", n, 111);
   else
@@ -39,4 +33,6 @@ int main(int argc, char *argv[]) {
     printf("Recebeu corretamente %d bytes %d\n", n, 2);
   else
     printf("Erro na recepcao de %d bytes %d\n", n, 2);
+
+  cliente.encerra();
 }

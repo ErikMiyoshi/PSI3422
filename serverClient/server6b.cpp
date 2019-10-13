@@ -1,14 +1,12 @@
 // server6b.cpp
 // testa sendBytes e receiveBytes
-#include "projeto.hpp"
+#include "CLIENT.hpp"
+#include "SERVER.hpp"
 //#include <cekeikon.h>
 
 int main() {
-  std::cout << "teste" << std::endl;
   SERVER server;
-  std::cout << "teste2" << std::endl;
   server.waitConnection();
-  std::cout << "teste3" << std::endl;
   const int n = 100000;
   BYTE buf[n];
   memset(buf, 111, n);
@@ -20,4 +18,6 @@ int main() {
     printf("Erro na recepcao de %d bytes %d\n", n, 214);
   memset(buf, 111, n);
   server.sendBytes(n, buf);
+
+  server.encerra();
 }

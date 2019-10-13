@@ -32,6 +32,8 @@ public:
   void sendBytes(int nBytesToSend, BYTE *buf);
   void receiveBytes(int nBytesToReceive, BYTE *buf);
   void *get_in_addr(struct sockaddr *sa);
+  void sendUint(uint32_t m);
+  void receiveUint(uint32_t &m);
   void encerra();
 
   socklen_t sin_size;
@@ -126,6 +128,18 @@ void *SERVER::get_in_addr(struct sockaddr *sa) {
     return &(((struct sockaddr_in *)sa)->sin_addr);
   }
   return &(((struct sockaddr_in6 *)sa)->sin6_addr);
+}
+
+void SERVER::sendUint(uint32_t m) {
+  static uint32_t n;
+  n = htonl(m);
+  sendBytes(4, (BYTE *)&n);
+}
+
+void SERVER::receiveUint(uint32_t &m) {
+  static uint32_t n;
+  receiveBytes(4, (BYTE *)&n);
+  m = ntohl(n);
 }
 
 void SERVER::encerra() { close(new_fd); }

@@ -32,6 +32,8 @@ public:
   void sendBytes(int nBytesToSend, BYTE *buf);
   void receiveBytes(int nBytesToReceive, BYTE *buf);
   void *get_in_addr(struct sockaddr *sa);
+  void sendUint(uint32_t m);
+  void receiveUint(uint32_t &m);
   void encerra();
 
   int sockfd, numbytes;
@@ -104,6 +106,18 @@ void *CLIENT::get_in_addr(struct sockaddr *sa) {
     return &(((struct sockaddr_in *)sa)->sin_addr);
   }
   return &(((struct sockaddr_in6 *)sa)->sin6_addr);
+}
+
+void CLIENT::sendUint(uint32_t m) {
+  static uint32_t n;
+  n = htonl(m);
+  sendBytes(4, (BYTE *)&n);
+}
+
+void CLIENT::receiveUint(uint32_t &m) {
+  static uint32_t n;
+  receiveBytes(4, (BYTE *)&n);
+  m = ntohl(n);
 }
 
 void CLIENT::encerra() { close(sockfd); }

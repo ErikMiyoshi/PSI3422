@@ -179,7 +179,7 @@ void SERVER::encerra() { close(new_fd); }
 bool testaBytes(BYTE *buf, BYTE b, int n) {
   // Testa se n bytes da memoria buf possuem valor b
   bool igual = true;
-  for (unsigned i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
     if (buf[i] != b) {
       igual = false;
       break;

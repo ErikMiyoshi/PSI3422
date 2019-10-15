@@ -1,11 +1,11 @@
 OUTPUT_FILE = server8
 OUTPUT_TEST_FILE = 
-_DEPS = 
+_DEPS = SERVER.hpp CLIENT.hpp
 _OBJ_MAIN = server8.o
 _OBJ_OTHERS = 
 _OBJ_TEST_ONLY = 
 
-_GTEST_MAIN = gtest_main.a
+_GTEST_MAIN =
 _OBJ_TEST = $(_OBJ_TEST_ONLY) $(_OBJ_OTHERS) $(_GTEST_MAIN)
 
 _OBJ = $(_OBJ_MAIN) $(_OBJ_OTHERS)
@@ -25,7 +25,7 @@ DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 OBJ_TEST = $(patsubst %,$(ODIR)/%,$(_OBJ_TEST))
 
-$(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
+$(ODIR)/%.o: $(SDIR)/%.c $(DEPS) 
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)

@@ -1,0 +1,1 @@
+g++ ./src/$nome_arquivo.cpp -I./include/ -o ./build/$nome_arquivo_sem_extensao

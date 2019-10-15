@@ -16,6 +16,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "cekeikon.h"
+
 typedef uint8_t BYTE;
 using namespace std;
 
@@ -39,6 +41,8 @@ public:
   void receiveString(string &st);
   void sendVb(const vector<BYTE> &vb);
   void receiveVb(vector<BYTE> &st);
+  void sendImg(const Mat_<COR> &img);
+  void receiveImg(Mat_<COR> &Img);
 
   void encerra();
 
@@ -51,7 +55,6 @@ public:
 };
 
 CLIENT::CLIENT(string endereco) {
-  std::cout << "teste1" << std::endl;
   this->endereco = endereco;
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC;
@@ -150,6 +153,21 @@ void CLIENT::receiveVb(vector<BYTE> &vb) {
   receiveUint(tamanho);
   vb.resize(tamanho);
   receiveBytes(tamanho, (BYTE *)vb.data());
+}
+
+void CLIENT::sendImg(const Mat_<COR> &img) {
+  if (img.isContinuous()) {
+    sendUint(img.rows);
+    sendUint(img.cols);
+    sendBytes((3 * img.rows * img.cols), (BYTE *)img.data);
+  }
+}
+void CLIENT::receiveImg(Mat_<COR> &Img) {
+  uint nl, nc;
+  receiveUint(nl);
+  receiveUint(nc);
+  Img.create(nl, nc);
+  receiveBytes(3 * nl * nc, Img.data);
 }
 
 void CLIENT::encerra() { close(sockfd); }

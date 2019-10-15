@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 //#include <string.h>
+#include <cekeikon.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -39,6 +40,8 @@ public:
   void receiveString(string &st);
   void sendVb(const vector<BYTE> &vb);
   void receiveVb(vector<BYTE> &st);
+  void sendImg(const Mat_<COR> &img);
+  void receiveImg(Mat_<COR> &Img);
 
   void encerra();
 
@@ -172,6 +175,21 @@ void SERVER::receiveVb(vector<BYTE> &vb) {
   receiveUint(tamanho);
   vb.resize(tamanho);
   receiveBytes(tamanho, (BYTE *)vb.data());
+}
+
+void SERVER::sendImg(const Mat_<COR> &img) {
+  if (img.isContinuous()) {
+    sendUint(img.rows);
+    sendUint(img.cols);
+    sendBytes((3 * img.rows * img.cols), (BYTE *)img.data);
+  }
+}
+void SERVER::receiveImg(Mat_<COR> &Img) {
+  uint nl, nc;
+  receiveUint(nl);
+  receiveUint(nc);
+  Mat_<COR> img(nl, nc);
+  receiveBytes(3 * nl * nc, img.data);
 }
 
 void SERVER::encerra() { close(new_fd); }

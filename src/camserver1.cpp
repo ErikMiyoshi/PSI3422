@@ -6,8 +6,8 @@ int main() {
   SERVER server;
   server.waitConnection();
   VideoCapture vi(0); // 0=default camera
-  vi.set(CV_CAP_PROP_FRAME_WIDTH, 80);
-  vi.set(CV_CAP_PROP_FRAME_HEIGHT, 60);
+  vi.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+  vi.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
   if (!vi.isOpened())
     erro("Erro abertura webcam");
   Mat_<COR> a;

@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
   CLIENT client(argv[1]);
   Mat_<COR> a;
   int ch;
-  namedWindow("janela");
+  // namedWindow("janela");
   do {
     client.receiveImg(a);
     imshow("janela", a);

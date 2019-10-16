@@ -185,25 +185,3 @@ void CLIENT::receiveImgComp(Mat_<COR> &img) {
 }
 
 void CLIENT::encerra() { close(sockfd); }
-
-bool testaBytes(BYTE *buf, BYTE b, int n) {
-  // Testa se n bytes da memoria buf possuem valor b
-  bool igual = true;
-  for (unsigned i = 0; i < n; i++)
-    if (buf[i] != b) {
-      igual = false;
-      break;
-    }
-  return igual;
-}
-
-bool testaVb(const vector<BYTE> vb, BYTE b) {
-  // Testa se todos os bytes de vb possuem valor b
-  bool igual = true;
-  for (unsigned i = 0; i < vb.size(); i++)
-    if (vb[i] != b) {
-      igual = false;
-      break;
-    }
-  return igual;
-}

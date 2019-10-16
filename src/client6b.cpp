@@ -1,7 +1,8 @@
 // client6b.cpp
 // testa sendBytes e receiveBytes
 #include "CLIENT.hpp"
-#include "SERVER.hpp"
+//#include "SERVER.hpp"
+#include "projeto.hpp"
 
 string convertToString(char *a, int size) {
   int i;

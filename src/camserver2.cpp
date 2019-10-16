@@ -1,4 +1,4 @@
-// camserver1.cpp
+// camserver2.cpp
 #include "SERVER.hpp"
 #include <cekeikon.h>
 
@@ -6,8 +6,8 @@ int main() {
   SERVER server;
   server.waitConnection();
   VideoCapture vi(0); // 0=default camera
-  vi.set(CV_CAP_PROP_FRAME_WIDTH, 80);
-  vi.set(CV_CAP_PROP_FRAME_HEIGHT, 60);
+  vi.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+  vi.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
   if (!vi.isOpened())
     erro("Erro abertura webcam");
   Mat_<COR> a;
@@ -17,7 +17,7 @@ int main() {
   do {
     vi >> a;
     // cout << "nl: " << a.rows << " nc: " << a.cols << endl;
-    server.sendImg(a);
+    server.sendImgComp(a);
     while (!resposta) { // Enquanto nao receber resposta, não envia nada
       server.receiveUint(resposta);
     }

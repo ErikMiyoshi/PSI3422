@@ -42,6 +42,8 @@ public:
   void receiveVb(vector<BYTE> &st);
   void sendImg(const Mat_<COR> &img);
   void receiveImg(Mat_<COR> &Img);
+  void sendImgComp(const Mat_<COR> &img);
+  void receiveImgComp(Mat_<COR> &img);
 
   void encerra();
 
@@ -190,6 +192,18 @@ void SERVER::receiveImg(Mat_<COR> &Img) {
   receiveUint(nc);
   Mat_<COR> img(nl, nc);
   receiveBytes(3 * nl * nc, img.data);
+}
+
+void SERVER::sendImgComp(const Mat_<COR> &img) {
+  vector<BYTE> vb;
+  vector<int> param{CV_IMWRITE_JPEG_QUALITY, 80};
+  imencode(".jpg", img, vb, param);
+  sendVb(vb);
+}
+void SERVER::receiveImgComp(Mat_<COR> &img) {
+  vector<BYTE> vb;
+  receiveVb(vb);
+  img = imdecode(vb, 1); // Numero 1 indica imagem colorida
 }
 
 void SERVER::encerra() { close(new_fd); }

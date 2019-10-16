@@ -1,7 +1,7 @@
 // server7.cpp
 //(insira aqui os includes e a classe SERVER)
 #include "SERVER.hpp"
-
+#include "projeto.hpp"
 int main(void) {
   SERVER server;
   server.waitConnection();

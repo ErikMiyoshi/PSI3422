@@ -1,7 +1,7 @@
 // camclient1.cpp
 #include "CLIENT.hpp"
+#include "projeto.hpp"
 #include <cekeikon.h>
-
 int main(int argc, char *argv[]) {
   if (argc != 2)
     perror("client6 servidorIpAddr\n");

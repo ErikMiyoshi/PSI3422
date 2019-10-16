@@ -2,6 +2,7 @@
 // testa sendBytes e receiveBytes
 #include "CLIENT.hpp"
 #include "SERVER.hpp"
+#include "projeto.hpp"
 //#include <cekeikon.h>
 
 int main() {

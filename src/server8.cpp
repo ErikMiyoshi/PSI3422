@@ -1,8 +1,8 @@
 // server8.cpp
 // testa sendVb e receiveVb
 #include "SERVER.hpp"
+#include "projeto.hpp"
 #include <vector>
-
 int main(void) {
   SERVER server;
   server.waitConnection();

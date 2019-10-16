@@ -1,7 +1,7 @@
 // camserver2.cpp
 #include "SERVER.hpp"
+#include "projeto.hpp"
 #include <cekeikon.h>
-
 int main() {
   SERVER server;
   server.waitConnection();

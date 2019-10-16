@@ -2,8 +2,8 @@
 // testa sendVb e receiveVb
 //#include "projeto.hpp"
 #include "CLIENT.hpp"
+#include "projeto.hpp"
 #include <vector>
-
 int main(int argc, char *argv[]) {
   if (argc != 2)
     perror("client6 servidorIpAddr\n");

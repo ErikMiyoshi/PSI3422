@@ -1,7 +1,7 @@
 // client7.cpp
 //(insira aqui os includes e a classe CLIENT)
 #include "CLIENT.hpp"
-
+#include "projeto.hpp"
 int main(int argc, char *argv[]) {
   if (argc != 2)
     perror("client7 servidorIpAddr\n");

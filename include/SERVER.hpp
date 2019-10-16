@@ -17,6 +17,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "projeto.hpp"
+
 typedef uint8_t BYTE;
 using namespace std;
 

@@ -1,6 +1,6 @@
 // server6c.cpp
 #include "SERVER.hpp"
-//#include "projeto.hpp"
+#include "projeto.hpp"
 
 int main(void) {
   SERVER server;

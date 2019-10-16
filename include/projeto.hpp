@@ -1,3 +1,6 @@
+#ifndef PROJETO_HPP
+#define PROJETO_HPP
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -41,3 +44,5 @@ bool testaVb(const vector<BYTE> vb, BYTE b) {
     }
   return igual;
 }
+
+#endif

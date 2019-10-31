@@ -90,3 +90,8 @@ dkms.conf
 
 build/*
 obj/*
+
+#Video and Image Files
+
+*.avi
+*.png

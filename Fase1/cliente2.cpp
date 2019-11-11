@@ -35,12 +35,13 @@ void on_mouse(int event, int c, int l, int flags, void *userdata) {
 int main(int argc, char *argv[]) {
   COR cinza(128, 128, 128);
   COR vermelho(0, 0, 255);
-  Mat_<COR> imagem(240, 560, cinza); //240 linha x 320 + 240 colunas = 240x560
+  Mat_<COR> imagem(240, 560, cinza); // 240 linha x 320 + 240 colunas = 240x560
   namedWindow("janela");
-  //resizeWindow("janela", 2 * imagem.cols, imagem.rows); //Janela vai ter 240x640
+  // resizeWindow("janela", 2 * imagem.cols, imagem.rows); //Janela vai ter
+  // 240x640
   setMouseCallback("janela", on_mouse);
   imshow("janela", imagem);
-  
+
   if (argc != 2)
     perror("client6 servidorIpAddr\n");
   CLIENT client(argv[1]);
@@ -55,13 +56,13 @@ int main(int argc, char *argv[]) {
   int ch;
   // namedWindow("janela");
   do {
-	client.sendUint(estado);
+    client.sendUint(estado);
     client.receiveImgComp(a);
 
     if (video)
       vo << a;
-	
-	imagem.setTo(cinza);
+
+    imagem.setTo(cinza);
     if (estado == 1) {
       for (int l = 0; l < 80; l++)
         for (int c = 0; c < 80; c++)
@@ -99,13 +100,13 @@ int main(int argc, char *argv[]) {
         for (int c = 160; c < 240; c++)
           imagem(l, c) = vermelho;
     }
-    
-    for(int l = 0; l < imagem.rows; l++){
-		for(int c = 0; c < imagem.cols; c++){
-			if(c > 240)
-				imagem(l,c) = a(l,c-240);
-		}
-	}
+
+    for (int l = 0; l < imagem.rows; l++) {
+      for (int c = 0; c < imagem.cols; c++) {
+        if (c > 240)
+          imagem(l, c) = a(l, c - 240);
+      }
+    }
     imshow("janela", imagem);
     client.sendUint(1); // Envia confirmação de recebimento de imagem
     ch = waitKey(25);

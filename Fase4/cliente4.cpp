@@ -105,6 +105,7 @@ int main(int argc, char *argv[]) {
   Mat_<FLT> resultado_norm;
   Mat_<COR> imagem(altura, largura);
   Mat_<COR> saida;
+  Mat_<COR> imgRecebida;
 
   COR cinza(128, 128, 128);
   COR vermelho(0, 0, 255);
@@ -123,40 +124,36 @@ int main(int argc, char *argv[]) {
 
   int novo_tamanho;
   uint comando;
-  // Avisa problemas de erro de sintaxe se o numero de argumentos nao for 2
-  // Para imagem inexistente, mensagem amigavel ja eh gerada
 
   if (argc != 2)
     perror("client6 servidorIpAddr\n");
 
   CLIENT client(argv[1]);
 
-  Mat_<COR> a;
   bool video = false;
   string nome = "";
   if (argc == 3) {
     video = true;
     nome = argv[2];
   }
-  VideoWriter vo(nome, CV_FOURCC('X', 'V', 'I', 'D'), 20, Size(320, 240));
+  VideoWriter vo(nome, CV_FOURCC('X', 'V', 'I', 'D'), 20,
+                 Size(largura, altura));
   int ch;
 
   interface GUI;
 
   TimePoint t1 = timePoint();
-  // Abre arquivo especificado pelo usiário
 
   namedWindow("janela", WINDOW_AUTOSIZE);
   setMouseCallback("janela", on_mouse);
 
   do {
-    client.sendUint(estado);
-    client.receiveImgComp(a);
+    client.sendUint(estado);            // Envia estado do mouse
+    client.receiveImgComp(imgRecebida); // Recebe imagem compactada
 
     if (video)
-      vo << a;
+      vo << imgRecebida;
 
-    // imshow("janela", imagem);
     client.sendUint(1); // Envia confirmação de recebimento de imagem
     ch = waitKey(25);
     ch = ch % 256;
@@ -166,7 +163,7 @@ int main(int argc, char *argv[]) {
       client.sendUint(26); // senao envia 26
 
     le(imgTemplate, "quadrado.png");
-    original = a.clone();
+    original = imgRecebida.clone();
     flip(original, original, -1);
     converte(original, original_flt);
 

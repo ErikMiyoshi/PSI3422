@@ -1,1 +1,3 @@
 g++ ./src/$nome_arquivo.cpp -I./include/ -o ./build/$nome_arquivo_sem_extensao
+
+compila NOME_ARQUIVO.cpp -e="-I /home/erik/Documentos/GitHub/PSI3422/include" -c (-w)

@@ -14,7 +14,7 @@ int melhor_template_nnorm(
 
   if (ultimo_tamanho < 15) {
     minimo = 15; // Para imagens pequenas x<=100
-    maximo = 60;
+    maximo = 70;
   } else {
     minimo = ultimo_tamanho - 10;
     maximo = ultimo_tamanho + 10;
@@ -64,7 +64,6 @@ void achaTemplate(Mat_<FLT> img, Mat_<FLT> imgTemplate, int tamanhoTemplate,
   resize(imgTemplate, imgTemplateTemp, Size(tamanhoTemplate, tamanhoTemplate),
          0, 0, INTER_AREA);
   imgTemplateTemp = somaAbsDois(dcReject(imgTemplateTemp));
-
   matchTemplate(img, imgTemplateTemp, resultado, metodo);
   minMaxLoc(resultado, &minVal, &maxVal, &minLoc, &maxLoc);
 }

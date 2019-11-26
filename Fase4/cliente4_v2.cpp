@@ -44,13 +44,13 @@ int main(int argc, char *argv[]) {
 
   double minVal_norm;
   double maxVal_norm;
-  const double maxValNormLimiar = 0.7;
+  const double maxValNormLimiar = 0.5;
   Point minLoc_norm;
   Point maxLoc_norm;
   Point matchLoc_norm;
 
   int novo_tamanho;
-  const int tamanhoLimiar = 53;
+  const int tamanhoLimiar = 64;
   uint comando;
 
   if (argc != 2)
@@ -75,32 +75,40 @@ int main(int argc, char *argv[]) {
 
   namedWindow("janela", WINDOW_AUTOSIZE);
   setMouseCallback("janela", on_mouse);
-
+  cout << "teste1 " << matchLoc.x << endl;
   do {
+    TimePoint t1 = timePoint();
     client.sendUint(estado);            // Envia estado do mouse
     client.receiveImgComp(imgRecebida); // Recebe imagem compactada
 
-    client.sendUint(1); // Envia confirmação de recebimento de imagem
-    ch = waitKey(25);
+    /*vector<int> compression_params;
+    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(100);
+    imwrite("teste.jpg", imgRecebida, compression_params);
+    // imshow("janela", imgRecebida);*/
+    client.sendUint(1);         // Envia confirmação de recebimento de imagem
+    TimePoint t2 = timePoint(); // Tempo do inicio até enviar a confirmacao
+    ch = waitKey(5);
     ch = ch % 256;
     if (ch == 27)          // Se esc foi apertado
       client.sendUint(27); // envia 27
     else
       client.sendUint(26); // senao envia 26
-
+    TimePoint t3 = timePoint();
     le(imgTemplate, "quadrado.png");
     original = imgRecebida.clone();
     flip(original, original, -1);
     converte(original, original_flt);
 
-    imgTemplate = trataModelo(imgTemplate, 0.9);
+    imgTemplate = trataModelo(imgTemplate, 1.0);
     novo_tamanho = melhor_template_nnorm(0, imgTemplate, original_flt);
 
-    achaTemplate(original, imgTemplate, novo_tamanho, CV_TM_CCORR, minVal,
+    achaTemplate(original_flt, imgTemplate, novo_tamanho, CV_TM_CCORR, minVal,
                  maxVal, minLoc, maxLoc);
-
+    TimePoint t4 =
+        timePoint(); // t3 a t4 tempo para achar o tamanho certo do template
     if (maxVal > maxValLimiar) {
-      achaTemplate(original, imgTemplate, novo_tamanho, CV_TM_CCOEFF_NORMED,
+      achaTemplate(original_flt, imgTemplate, novo_tamanho, CV_TM_CCOEFF_NORMED,
                    minVal_norm, maxVal_norm, minLoc_norm, maxLoc_norm);
 
       if (((maxLoc.x - maxLoc_norm.x) * (maxLoc.x - maxLoc_norm.x) +
@@ -116,7 +124,7 @@ int main(int argc, char *argv[]) {
             matchLoc); // Funcao que desenha retangulo na imagemd e saida
       }
     }
-
+    TimePoint t5 = timePoint(); // t4 a t5 - tempo até fazer o maching norm
     if (video)
       vo << original;
 
@@ -124,23 +132,29 @@ int main(int argc, char *argv[]) {
     saida = GUI.pintaBotao(saida, estado, altura, largura);
 
     imshow("janela", saida);
+    TimePoint t6 = timePoint(); // t5 a t6 - tempo até mostrar a imagem na tela
+    double t12 = timeSpan(t1, t2);
+    double t34 = timeSpan(t3, t4);
+    double t45 = timeSpan(t4, t5);
+    double t56 = timeSpan(t5, t6);
 
-    // TimePoint t2 = timePoint();
-    // double t = timeSpan(t1, t2);
-    // impTempo(t1);
+    cout << "tempos: t12: " << t12 << "  t34: " << t34 << "  t45: " << t45
+         << "  t56: " << t56 << endl;
     // cout << "tamanho: " << novo_tamanho << endl;
     // cout << "matchLoc.x: " << matchLoc.x << endl;
+
     int posicaoX = matchLoc.x + novo_tamanho / 2;
-    uint pwm = 100;
+    float posicaoX_norm = (float)posicaoX / largura;
+    uint pwm = 70;
     if (novo_tamanho > tamanhoLimiar ||
-        (maxVal < maxValLimiar && maxVal_norm < maxValNormLimiar)) {
+        (maxVal < maxValLimiar || maxVal_norm < maxValNormLimiar)) {
       comando = 5;
     } else if (posicaoX < largura / 3) {
       comando = 1;
-      pwm = largura / 2 - posicaoX;
+      pwm += (1 - posicaoX_norm) * 30;
     } else if (posicaoX > 2 * largura / 3) {
       comando = 7;
-      pwm = posicaoX - largura / 2;
+      pwm += posicaoX_norm * 30;
     } else if (posicaoX > largura / 3 && posicaoX < 2 * largura / 3) {
       comando = 4;
     } else {
@@ -148,14 +162,20 @@ int main(int argc, char *argv[]) {
     }
     client.sendUint(comando);
     client.sendUint(pwm);
-    // cout << "comando: " << comando << endl;
-    // cout << "maxval: " << maxVal << endl;
-    // cout << "maxVal_norm: " << maxVal_norm << endl;
+    cout << "tamanho: " << novo_tamanho << endl;
+    cout << "comando: " << comando << endl;
+    cout << "maxval: " << maxVal << endl;
+    cout << "maxVal_norm: " << maxVal_norm << endl;
+    cout << "posicaoX: " << posicaoX << " posicaox norm: " << posicaoX_norm
+         << endl;
+    cout << "pwm: " << pwm << endl;
+
     comando = 5;
     maxVal = 0;
     maxVal_norm = 0;
 
     // matchLoc.x = largura / 2;
     // matchLoc.y = altura / 2;
+
   } while (ch != 27);
 }

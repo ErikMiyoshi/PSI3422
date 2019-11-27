@@ -95,19 +95,40 @@ CLIENT::CLIENT(string endereco) {
 CLIENT::~CLIENT() {}
 
 void CLIENT::sendBytes(int nBytesToSend, BYTE *buf) {
-  for (int i = 0; i < nBytesToSend; i++) {
-    if (send(sockfd, &buf[i], 1, 0) == -1)
-      perror("send");
+
+  while (nBytesToSend > 0) {
+    int nSentBytes = send(sockfd, buf, nBytesToSend, 0);
+    if (nSentBytes == -1) {
+      perror("camserver: send");
+      exit(1);
+    }
+    nBytesToSend -= nSentBytes;
+    buf += nSentBytes;
   }
+
+  /*for (int i = 0; i < (nBytesToSend / MAXDATASIZE) + 1; i++) {
+    if (send(sockfd, &buf[i], MAXDATASIZE, 0) == -1)
+      perror("send");
+  }*/
   /*if (send(sockfd, buf, strlen((char *)buf) + 1, 0) == -1)
     perror("send");*/
 }
 
 void CLIENT::receiveBytes(int nBytesToReceive, BYTE *buf) {
-  for (int i = 0; i < nBytesToReceive; i++) {
-    if (recv(sockfd, &buf[i], 1, 0) == -1)
+  while (nBytesToReceive > 0) {
+    int nReceivedBytes = recv(sockfd, buf, nBytesToReceive, 0);
+    if (nReceivedBytes == -1) {
       perror("recv");
+      exit(1);
+    }
+    nBytesToReceive -= nReceivedBytes;
+    buf += nReceivedBytes;
   }
+
+  /*for (int i = 0; i < (nBytesToReceive / MAXDATASIZE) + 1; i++) {
+    if (recv(sockfd, &buf[i], MAXDATASIZE, 0) == -1)
+      perror("recv");
+  }*/
   /*if (recv(sockfd, buf, MAXDATASIZE, 0) == -1)
     perror("recv");*/
 }

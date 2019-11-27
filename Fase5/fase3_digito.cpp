@@ -189,8 +189,8 @@ int main(int argc, char *argv[]) {
     Mat_<FLT> digito_inv(corte, corte);
     Mat_<FLT> digito_tratado;
     Mat_<FLT> qx2(1, 14 * 14);
-
     Mat_<FLT> qx2_bbox;
+
     for (int l = 0; l < corte; l++) {
       for (int c = 0; c < corte; c++) {
         digito(l, c) =

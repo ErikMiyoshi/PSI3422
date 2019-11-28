@@ -6,9 +6,9 @@ int melhor_template_nnorm(
     int ultimo_tamanho, Mat_<FLT> imagem_referencia,
     Mat_<FLT> imagem_original) { // Acha o tamanho ideal da imagem de referencia
 
-  int tamanho = 100;         // variavel que definira tamanho do template
-  int minimo = 30;           // minimo tamanho a percorrer
-  int maximo = 130;          // maximo tamanho a percorrer
+  int tamanho = 0;           // variavel que definira tamanho do template
+  int minimo = 15;           // minimo tamanho a percorrer
+  int maximo = 70;           // maximo tamanho a percorrer
   float max_value_aux = 0.0; // Usado para comparar qual a maior correlacao com
                              // a imagem e o template
 
@@ -40,6 +40,7 @@ int melhor_template_nnorm(
 
     matchTemplate(imagem_original, imagem_referencia_temp, resultado,
                   CV_TM_CCORR);
+
     minMaxLoc(resultado, &minVal, &maxVal, &minLoc, &maxLoc);
     // cout << " max Val = " << maxVal;
     // Se a imagem eh pequena a correlacao deve ser bem alta para evitar
@@ -89,47 +90,45 @@ Mat_<COR> desenha_retangulo(int tamanho, Mat_<COR> imagem, Mat_<FLT> ref,
   return imagem;
 }
 
-int reconheciDigito(MNIST mnist, flann::Index ind, int novo_tamanho,
-                    Mat_<FLT> original_flt, Point maxLoc,
-                    Mat_<FLT> &digitoSemBordaBin,
-                    Mat_<COR> &digitoSemBordaBinMaior,
-                    Mat_<COR> &digitoOriginalCorMaior) {
+void reconheciDigito(MNIST mnist, int tamanhoTemplate, Mat_<FLT> original_flt,
+                     Point maxLoc, int &resultadoReconhecimento,
+                     Mat_<FLT> &digitoSemBordaBin,
+                     Mat_<COR> &digitoSemBordaBinMaior,
+                     Mat_<COR> &digitoOriginalCorMaior, Mat_<FLT> &qx2) {
+  int corte = tamanhoTemplate * 0.4;
+  int borda = tamanhoTemplate * (1 - 0.40);
+  const int digitoTamanho = 100;
 
-  int corte = novo_tamanho * 0.4;
-  int borda = novo_tamanho * (1 - 0.40);
-  const int digitoTamanho = 200;
-
-  Mat_<FLT> digito(corte, corte);
-  Mat_<FLT> digito_maior;
-  Mat_<FLT> digito_maior_bbox;
-  Mat_<FLT> digitoSemBordaBinMaiorFLT;
-  Mat_<FLT> digito_14;
-  Mat_<COR> digito_14_3b;
-  Mat_<FLT> digito_inv(corte, corte);
-  Mat_<FLT> digito_tratado;
-  Mat_<FLT> qx2;
-  Mat_<FLT> qx2_bbox;
-  Mat_<FLT> d_maior;
+  Mat_<FLT> digitoOriginal(corte, corte);
+  Mat_<FLT> digitoOriginalMaior(digitoTamanho, digitoTamanho, 0.0);
+  Mat_<FLT> digitoSemBordaBinMaiorFLT(digitoTamanho, digitoTamanho, 0.0);
+  Mat_<FLT> digitoMnist;
 
   for (int l = 0; l < corte; l++) {
     for (int c = 0; c < corte; c++) {
-      digito(l, c) =
+      digitoOriginal(l, c) =
           original_flt(maxLoc.y + l + borda / 2, maxLoc.x + c + borda / 2);
     }
   }
-  resize(digito, digito_14, Size(14, 14), 0, 0, INTER_AREA);
-  converte(digito_14, digito_14_3b);
-  int esq = digito_14.cols, dir = 0, cima = digito_14.rows, baixo = 0;
+
+  Mat_<FLT> kerRealceBorda =
+      (Mat_<FLT>(3, 3) << -1, -1, -1, -1, 18, -1, -1, -1, -1);
+  kerRealceBorda = (1.0 / 10.0) * kerRealceBorda;
+
+  resize(digitoOriginal, digitoMnist, Size(mnist.nlado, mnist.nlado), 0, 0,
+         INTER_AREA);
+
+  int esq = digitoMnist.cols, dir = 0, cima = digitoMnist.rows, baixo = 0;
   bool localizou;
-  for (int l = 0; l < digito_14.rows; l++) {
-    for (int c = 0; c < digito_14.cols; c++) {
-      if (digito_14(l, c) < 0.4) {
-        digito_14(l, c) = 0;
+  for (int l = 0; l < digitoMnist.rows; l++) {
+    for (int c = 0; c < digitoMnist.cols; c++) {
+      if (digitoMnist(l, c) < 0.5) {
+        digitoMnist(l, c) = 0;
       } else {
-        digito_14(l, c) = 1;
+        digitoMnist(l, c) = 1;
       }
 
-      if (digito_14(l, c) != 1) {
+      if (digitoMnist(l, c) != 1) {
         if (c < esq)
           esq = c;
         if (dir < c)
@@ -143,42 +142,26 @@ int reconheciDigito(MNIST mnist, flann::Index ind, int novo_tamanho,
   }
   if (!(esq < dir && cima < baixo)) { // erro na localizacao
     localizou = false;
-    digitoSemBordaBin.create(14, 14);
-    digitoSemBordaBin.setTo(128);
+    digitoSemBordaBin.create(mnist.nlado, mnist.nlado);
+    digitoSemBordaBin.setTo(0.0);
   } else {
     localizou = true;
-    Mat_<FLT> roi(digito_14, Rect(esq, cima, dir - esq + 1, baixo - cima + 1));
-    resize(roi, digitoSemBordaBin, Size(14, 14), 0, 0, INTER_AREA);
+    Mat_<FLT> roi(digitoMnist,
+                  Rect(esq, cima, dir - esq + 1, baixo - cima + 1));
+    resize(roi, digitoSemBordaBin, Size(mnist.nlado, mnist.nlado), 0, 0,
+           INTER_AREA);
   }
-  qx2.create(digitoSemBordaBin.rows * digitoSemBordaBin.cols, 1);
+
   for (int l = 0; l < digitoSemBordaBin.rows; l++) {
     for (int c = 0; c < digitoSemBordaBin.cols; c++) {
-      cout << "dsb(" << l << "," << c << "): " << digitoSemBordaBin(l, c)
-           << endl;
       qx2(0, l * digitoSemBordaBin.cols + c) = digitoSemBordaBin(l, c);
-      cout << "qxw(" << l << "," << c << "): " << qx2(0, l * digito_14.cols + c)
-           << endl;
     }
   }
-  int resultadoReconhecimento;
-  vector<int> indices(1);
-  vector<float> dists(1);
-  cout << "size: " << qx2.size() << endl;
-  cout << "entrou aqui1" << endl;
-  ind.knnSearch(qx2.row(0), indices, dists, 1);
-  cout << "entrou aqui2" << endl;
-  resultadoReconhecimento = mnist.ay(indices[0]);
-  cout << "reconheci: " << resultadoReconhecimento << endl;
 
   resize(digitoSemBordaBin, digitoSemBordaBinMaiorFLT,
          Size(digitoTamanho, digitoTamanho), 0, 0, INTER_AREA);
-  resize(digito, digito_maior, Size(digitoTamanho, digitoTamanho), 0, 0,
-         INTER_AREA);
+  resize(digitoOriginal, digitoOriginalMaior,
+         Size(digitoTamanho, digitoTamanho), 0, 0, INTER_AREA);
   converte(digitoSemBordaBinMaiorFLT, digitoSemBordaBinMaior);
-  converte(digito_maior, digitoOriginalCorMaior);
-
-  // namedWindow("janela", WINDOW_AUTOSIZE);
-  // imshow("janela", digitoSemBordaBinMaiorFLT);
-  // waitKey(2000);
-  return resultadoReconhecimento;
+  converte(digitoOriginalMaior, digitoOriginalCorMaior);
 }

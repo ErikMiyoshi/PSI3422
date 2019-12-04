@@ -1,19 +1,16 @@
 #include <cekeikon.h>
-#include <softPwm.h>
-#include <wiringPi.h>
 
 #define MOTOR1_A 3
 #define MOTOR1_B 2
 #define MOTOR2_A 1
 #define MOTOR2_B 0
-#define COMPENSA 7
 
-class carro {
+class carro2 {
 private:
   /* data */
 public:
-  carro(/* args */);
-  ~carro();
+  carro2(/* args */);
+  ~carro2();
 
   void andaFrente();
   void andaTras();
@@ -40,94 +37,40 @@ public:
   int posicaoX = 0;
   int posicaoY = 0;
   int tamanhoTemplateAtual;
-  const int tamanhoTemplateLimiar = 44;
+  const int tamanhoTemplateLimiar = 54;
 };
 
-carro::carro() {
+carro2::carro2() {
   this->pwm = 100;
   this->tamanhoTemplateAtual = 0;
-  wiringPiSetup();
-  if (softPwmCreate(0, 0, 100))
-    erro("erro");
-  if (softPwmCreate(1, 0, 100))
-    erro("erro");
-  if (softPwmCreate(2, 0, 100))
-    erro("erro");
-  if (softPwmCreate(3, 0, 100))
-    erro("erro");
 }
 
-carro::~carro() {}
+carro2::~carro2() {}
 
-void carro::andaFrente() {
-  softPwmWrite(MOTOR1_A, pwm - COMPENSA);
-  softPwmWrite(MOTOR1_B, 0);
-  softPwmWrite(MOTOR2_A, 0);
-  softPwmWrite(MOTOR2_B, pwm);
-}
+void carro2::andaFrente() {}
 
-void carro::andaTras() {
-  softPwmWrite(MOTOR1_A, 0);
-  softPwmWrite(MOTOR1_B, pwm - COMPENSA);
-  softPwmWrite(MOTOR2_A, pwm);
-  softPwmWrite(MOTOR2_B, 0);
-}
+void carro2::andaTras() {}
 
-void carro::viraEsquerda() {
-  softPwmWrite(MOTOR1_A, pwm - COMPENSA);
-  softPwmWrite(MOTOR1_B, 0);
-  softPwmWrite(MOTOR2_A, 0);
-  softPwmWrite(MOTOR2_B, 0);
-}
+void carro2::viraEsquerda() {}
 
-void carro::voltaEsquerda() {
-  softPwmWrite(MOTOR1_A, 0);
-  softPwmWrite(MOTOR1_B, pwm);
-  softPwmWrite(MOTOR2_A, 0);
-  softPwmWrite(MOTOR2_B, 0);
-}
+void carro2::voltaEsquerda() {}
 
-void carro::viraDireita() {
-  softPwmWrite(MOTOR1_A, 0);
-  softPwmWrite(MOTOR1_B, 0);
-  softPwmWrite(MOTOR2_A, 0);
-  softPwmWrite(MOTOR2_B, pwm);
-}
+void carro2::viraDireita() {}
 
-void carro::voltaDireita() {
-  softPwmWrite(MOTOR1_A, 0);
-  softPwmWrite(MOTOR1_B, 0);
-  softPwmWrite(MOTOR2_A, 0);
-  softPwmWrite(MOTOR2_B, pwm);
-}
+void carro2::voltaDireita() {}
 
-void carro::rotacionaEsquerda() {
-  softPwmWrite(MOTOR1_A, pwm);
-  softPwmWrite(MOTOR1_B, 0);
-  softPwmWrite(MOTOR2_A, pwm - COMPENSA);
-  softPwmWrite(MOTOR2_B, 0);
-}
+void carro2::rotacionaEsquerda() {}
 
-void carro::rotacionaDireita() {
-  softPwmWrite(MOTOR1_A, 0);
-  softPwmWrite(MOTOR1_B, pwm);
-  softPwmWrite(MOTOR2_A, 0);
-  softPwmWrite(MOTOR2_B, pwm - COMPENSA);
-}
+void carro2::rotacionaDireita() {}
 
-void carro::para() {
-  softPwmWrite(MOTOR1_A, 0);
-  softPwmWrite(MOTOR1_B, 0);
-  softPwmWrite(MOTOR2_A, 0);
-  softPwmWrite(MOTOR2_B, 0);
-}
+void carro2::para() {}
 
-void carro::vira90Esquerda(TimePoint &t3, bool &acabou) {
+void carro2::vira90Esquerda(TimePoint &t3, bool &acabou) {
   TimePoint t4 = timePoint();
   this->pwm = 100;
   double t = timeSpan(t3, t4);
   // cout << "t: " << t << endl;
-  if (t < 1.4) {
+  if (t < 1.65) {
     this->rotacionaEsquerda();
   } else {
     acabou = true;
@@ -135,12 +78,12 @@ void carro::vira90Esquerda(TimePoint &t3, bool &acabou) {
   }
 }
 
-void carro::vira90Direita(TimePoint &t3, bool &acabou) {
+void carro2::vira90Direita(TimePoint &t3, bool &acabou) {
   TimePoint t4 = timePoint();
   this->pwm = 100;
   double t = timeSpan(t3, t4);
   // cout << "t: " << t << endl;
-  if (t < 1.4) {
+  if (t < 1.65) {
     this->rotacionaDireita();
   } else {
     acabou = true;
@@ -148,12 +91,12 @@ void carro::vira90Direita(TimePoint &t3, bool &acabou) {
   }
 }
 
-void carro::vira180Esquerda(TimePoint &t3, bool &acabou) {
+void carro2::vira180Esquerda(TimePoint &t3, bool &acabou) {
   TimePoint t4 = timePoint();
   this->pwm = 100;
   double t = timeSpan(t3, t4);
   // cout << "t: " << t << endl;
-  if (t < 2.9) {
+  if (t < 3.1) {
     this->rotacionaEsquerda();
   } else {
     acabou = true;
@@ -161,12 +104,12 @@ void carro::vira180Esquerda(TimePoint &t3, bool &acabou) {
   }
 }
 
-void carro::vira180Direita(TimePoint &t3, bool &acabou) {
+void carro2::vira180Direita(TimePoint &t3, bool &acabou) {
   TimePoint t4 = timePoint();
   this->pwm = 100;
   double t = timeSpan(t3, t4);
   // cout << "t: " << t << endl;
-  if (t < 2.9) {
+  if (t < 3.1) {
     this->rotacionaDireita();
   } else {
     acabou = true;
@@ -174,7 +117,7 @@ void carro::vira180Direita(TimePoint &t3, bool &acabou) {
   }
 }
 
-void carro::andaFrenteSegundos(double t, TimePoint &t3, bool &acabou) {
+void carro2::andaFrenteSegundos(double t, TimePoint &t3, bool &acabou) {
   TimePoint t4 = timePoint();
   this->pwm = 100;
   double t2 = timeSpan(t3, t4);
@@ -186,7 +129,7 @@ void carro::andaFrenteSegundos(double t, TimePoint &t3, bool &acabou) {
   }
 }
 
-void carro::comando(int estado) {
+void carro2::comando(int estado) {
   switch (estado) {
   case 1:
     viraEsquerda();
@@ -220,9 +163,9 @@ void carro::comando(int estado) {
   }
 }
 
-void carro::setPwm(int pwm) { this->pwm = pwm; }
+void carro2::setPwm(int pwm) { this->pwm = pwm; }
 
-void carro::setComando() {
+void carro2::setComando() {
   /*if (tamanhoTemplate > tamanhoLimiar ||
       (maxVal < maxValLimiar || maxVal_norm < maxValNormLimiar)) {
     comando = 5;
@@ -239,6 +182,6 @@ void carro::setComando() {
   }*/
 }
 
-void carro::setTamanhoTemplate(int tamanhoTemplate) {
+void carro2::setTamanhoTemplate(int tamanhoTemplate) {
   this->tamanhoTemplateAtual = tamanhoTemplate;
 }

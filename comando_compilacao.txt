@@ -1,3 +1,6 @@
 g++ ./src/$nome_arquivo.cpp -I./include/ -o ./build/$nome_arquivo_sem_extensao
 
-compila NOME_ARQUIVO.cpp -e="-I /home/erik/Documentos/GitHub/PSI3422/include" -c (-w)
+compila NOME_ARQUIVO.cpp -e="-I /home/erik/Documentos/GitHub/PSI3422/include" -c -mp
+
+compila cliente6_v2.cpp -e="-I /home/erik/Documentos/GitHub/PSI3422/include" -c -mp
+compila servidor6_v2.cpp -e="-I /home/pi/Documents/Pi_sshfs/include" -c -mp -w

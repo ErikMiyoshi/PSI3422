@@ -7,22 +7,19 @@ int melhor_template_nnorm(
     Mat_<FLT> imagem_original) { // Acha o tamanho ideal da imagem de referencia
 
   int tamanho = 0;           // variavel que definira tamanho do template
-  int minimo = 15;           // minimo tamanho a percorrer
-  int maximo = 70;           // maximo tamanho a percorrer
+  int minimo = 5;            // minimo tamanho a percorrer
+  int maximo = 85;           // maximo tamanho a percorrer
   float max_value_aux = 0.0; // Usado para comparar qual a maior correlacao com
                              // a imagem e o template
 
   if (ultimo_tamanho < 15) {
-    minimo = 15; // Para imagens pequenas x<=100
-    maximo = 70;
-  } else {
-    minimo = ultimo_tamanho - 10;
-    maximo = ultimo_tamanho + 10;
+    minimo = 5; // Para imagens pequenas x<=100
+    maximo = 85;
   }
 
 #pragma omp parallel for
   for (int i = minimo; i < maximo;
-       i = i + 5) { // Para cada um dos tamanhos ve qual a melhor correlacao
+       i = i + 3) { // Para cada um dos tamanhos ve qual a melhor correlacao
     // cout << " i = " << i << endl;
     double minVal;
     double maxVal;
@@ -122,7 +119,7 @@ void reconheciDigito(MNIST mnist, int tamanhoTemplate, Mat_<FLT> original_flt,
   bool localizou;
   for (int l = 0; l < digitoMnist.rows; l++) {
     for (int c = 0; c < digitoMnist.cols; c++) {
-      if (digitoMnist(l, c) < 0.5) {
+      if (digitoMnist(l, c) < 0.4) {
         digitoMnist(l, c) = 0;
       } else {
         digitoMnist(l, c) = 1;
